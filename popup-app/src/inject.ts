@@ -117,6 +117,29 @@ const headersToObject = (
   return obj
 }
 
+// Parse document.cookie into key-value pairs
+const parseDocumentCookies = (): Record<string, string> => {
+  const cookies: Record<string, string> = {}
+  document.cookie.split(";").forEach((c) => {
+    const trimmed = c.trim()
+    const eqIdx = trimmed.indexOf("=")
+    if (eqIdx > 0) {
+      cookies[trimmed.substring(0, eqIdx)] = trimmed.substring(eqIdx + 1)
+    }
+  })
+  return cookies
+}
+
+// Parse Set-Cookie header value into name=value (ignores attributes)
+const parseSetCookieValue = (value: string): Record<string, string> => {
+  const cookies: Record<string, string> = {}
+  const match = value.match(/^([^=]+)=([^;]*)/)
+  if (match) {
+    cookies[match[1]] = match[2]
+  }
+  return cookies
+}
+
 // Intercept fetch
 const originalFetch = window.fetch
 window.fetch = async function (
@@ -161,6 +184,7 @@ window.fetch = async function (
         url,
         requestHeaders,
         requestBody,
+        requestCookies: parseDocumentCookies(),
         startTime: Date.now(),
       },
     },
@@ -171,10 +195,14 @@ window.fetch = async function (
     const response = await originalFetch.call(this, input, init)
     const clonedResponse = response.clone()
 
-    // Extract response headers
+    // Extract response headers and cookies
     const responseHeaders: Record<string, string> = {}
+    const responseCookies: Record<string, string> = {}
     response.headers.forEach((value, key) => {
       responseHeaders[key] = value
+      if (key.toLowerCase() === "set-cookie") {
+        Object.assign(responseCookies, parseSetCookieValue(value))
+      }
     })
 
     // Try to get response body
@@ -207,6 +235,7 @@ window.fetch = async function (
           statusText: response.statusText,
           responseHeaders,
           responseBody,
+          responseCookies,
           startTime: 0,
           endTime: Date.now(),
         },
@@ -310,6 +339,7 @@ XMLHttpRequest.prototype.send = function (
           url: devtools.url,
           requestHeaders: devtools.requestHeaders,
           requestBody: devtools.requestBody,
+          requestCookies: parseDocumentCookies(),
           startTime: devtools.startTime,
         },
       },
@@ -317,13 +347,19 @@ XMLHttpRequest.prototype.send = function (
     )
 
     this.addEventListener("load", () => {
-      // Parse response headers
+      // Parse response headers and cookies
       const responseHeaders: Record<string, string> = {}
+      const responseCookies: Record<string, string> = {}
       const headerLines = this.getAllResponseHeaders().trim().split("\r\n")
       headerLines.forEach((line) => {
         const idx = line.indexOf(": ")
         if (idx > 0) {
-          responseHeaders[line.substring(0, idx)] = line.substring(idx + 2)
+          const key = line.substring(0, idx)
+          const value = line.substring(idx + 2)
+          responseHeaders[key] = value
+          if (key.toLowerCase() === "set-cookie") {
+            Object.assign(responseCookies, parseSetCookieValue(value))
+          }
         }
       })
 
@@ -356,6 +392,7 @@ XMLHttpRequest.prototype.send = function (
             statusText: this.statusText,
             responseHeaders,
             responseBody,
+            responseCookies,
             startTime: devtools.startTime,
             endTime: Date.now(),
           },

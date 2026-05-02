@@ -113,6 +113,19 @@ export function Network({ requests }: NetworkProps) {
           </div>
         )}
 
+        {selected.requestCookies &&
+          Object.keys(selected.requestCookies).length > 0 && (
+            <div className="network-detail-section">
+              <div className="network-detail-title">Request Cookies</div>
+              {Object.entries(selected.requestCookies).map(([k, v]) => (
+                <div key={k} className="network-detail-row">
+                  <span className="network-detail-key">{k}:</span>
+                  <span className="network-detail-value">{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
         {selected.responseHeaders &&
           Object.keys(selected.responseHeaders).length > 0 && (
             <div className="network-detail-section">
@@ -134,6 +147,19 @@ export function Network({ requests }: NetworkProps) {
             </pre>
           </div>
         )}
+
+        {selected.responseCookies &&
+          Object.keys(selected.responseCookies).length > 0 && (
+            <div className="network-detail-section">
+              <div className="network-detail-title">Response Cookies</div>
+              {Object.entries(selected.responseCookies).map(([k, v]) => (
+                <div key={k} className="network-detail-row">
+                  <span className="network-detail-key">{k}:</span>
+                  <span className="network-detail-value">{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
       </div>
     )
   }

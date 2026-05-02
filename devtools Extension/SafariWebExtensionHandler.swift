@@ -170,6 +170,9 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 let maxSize = Settings.maxResponseBodySize
                 existing.responseBody = responseBody.count > maxSize ? String(responseBody.prefix(maxSize)) + "... [truncated]" : responseBody
             }
+            if let responseCookies = requestData["responseCookies"] as? [String: String] {
+                existing.responseCookies = responseCookies
+            }
             if let error = requestData["error"] as? String {
                 existing.error = error
             }
@@ -214,8 +217,10 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 statusText: requestData["statusText"] as? String,
                 requestHeaders: requestData["requestHeaders"] as? [String: String],
                 requestBody: requestBody,
+                requestCookies: requestData["requestCookies"] as? [String: String],
                 responseHeaders: requestData["responseHeaders"] as? [String: String],
                 responseBody: nil,
+                responseCookies: requestData["responseCookies"] as? [String: String],
                 error: requestData["error"] as? String,
                 startTime: startTime,
                 endTime: nil

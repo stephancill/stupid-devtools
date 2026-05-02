@@ -343,6 +343,14 @@ struct NetworkDetailView: View {
                                 .font(.system(.caption, design: .monospaced))
                         }
                     }
+                    
+                    if let cookies = request.requestCookies, !cookies.isEmpty {
+                        DisclosureGroup("Cookies") {
+                            ForEach(Array(cookies.keys.sorted()), id: \.self) { key in
+                                LabeledContent(key, value: cookies[key] ?? "")
+                            }
+                        }
+                    }
                 }
                 
                 Section("Response") {
@@ -367,6 +375,14 @@ struct NetworkDetailView: View {
                         DisclosureGroup("Body") {
                             Text(body)
                                 .font(.system(.caption, design: .monospaced))
+                        }
+                    }
+                    
+                    if let cookies = request.responseCookies, !cookies.isEmpty {
+                        DisclosureGroup("Cookies") {
+                            ForEach(Array(cookies.keys.sorted()), id: \.self) { key in
+                                LabeledContent(key, value: cookies[key] ?? "")
+                            }
                         }
                     }
                 }

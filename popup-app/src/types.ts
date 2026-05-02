@@ -15,8 +15,10 @@ export interface NetworkEntry {
   endTime?: number
   requestHeaders?: Record<string, string>
   requestBody?: string | null
+  requestCookies?: Record<string, string>
   responseHeaders?: Record<string, string>
   responseBody?: string | null
+  responseCookies?: Record<string, string>
   error?: string
 }
 

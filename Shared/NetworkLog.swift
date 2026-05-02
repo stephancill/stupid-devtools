@@ -17,8 +17,10 @@ class NetworkLog {
     var statusText: String?
     var requestHeaders: [String: String]?
     var requestBody: String?
+    var requestCookies: [String: String]?
     var responseHeaders: [String: String]?
     var responseBody: String?
+    var responseCookies: [String: String]?
     var error: String?
     var startTime: Date
     var endTime: Date?
@@ -33,8 +35,10 @@ class NetworkLog {
         statusText: String? = nil,
         requestHeaders: [String: String]? = nil,
         requestBody: String? = nil,
+        requestCookies: [String: String]? = nil,
         responseHeaders: [String: String]? = nil,
         responseBody: String? = nil,
+        responseCookies: [String: String]? = nil,
         error: String? = nil,
         startTime: Date,
         endTime: Date? = nil
@@ -48,8 +52,10 @@ class NetworkLog {
         self.statusText = statusText
         self.requestHeaders = requestHeaders
         self.requestBody = requestBody
+        self.requestCookies = requestCookies
         self.responseHeaders = responseHeaders
         self.responseBody = responseBody
+        self.responseCookies = responseCookies
         self.error = error
         self.startTime = startTime
         self.endTime = endTime
