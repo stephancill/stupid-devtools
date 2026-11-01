@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "browser devtools",
+  "name": "stupid devtools",
   "description": "Browser developer tools for mobile: debug any page with a console and network inspector.",
   "version": "1.1.0",
   "icons": {

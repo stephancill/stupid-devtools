@@ -1,4 +1,4 @@
-# browser devtools
+# stupid devtools
 
 A Safari Web Extension for iOS that adds a console and network inspector to mobile Safari, plus a host app that keeps per-tab history. Built with the stupid-app CLI (SwiftPM, no Xcode project).
 

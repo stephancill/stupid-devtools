@@ -64,3 +64,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 
 - Uploaded the simplified design as build 41; it reached internal TestFlight testing.
 - This repository replaced the 1.0 Xcode project on the `main` branch of the existing GitHub repository. The 1.0 history is kept on the `legacy-xcode` branch.
+
+## 2026-11-01 - Rename to stupid devtools, new icon
+
+- Display name is now "stupid devtools" for the app (`CFBundleDisplayName`), the extension and its manifest, and the setup instructions. Bundle IDs and the App Group are unchanged.
+- New icon (an empty chip outline) for the app, the extension icons and the Safari toolbar icons.
+- Verified on an iOS 27 simulator home screen.

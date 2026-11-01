@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDisplayName</key>
-    <string>browser devtools</string>
+    <string>stupid devtools</string>
     <key>CFBundleIdentifier</key>
     <string>co.za.stephancill.devtools</string>
     <key>CFBundleShortVersionString</key>

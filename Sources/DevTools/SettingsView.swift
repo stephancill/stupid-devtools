@@ -82,7 +82,7 @@ struct SetupView: View {
     List {
       Section {
         Text("1. Open Settings, then Apps › Safari › Extensions.")
-        Text("2. Tap browser devtools and turn it on.")
+        Text("2. Tap stupid devtools and turn it on.")
         Text("3. Allow it on All Websites, or on the sites you want to debug.")
         Text("4. Reload the page, then tap the extension in Safari's address bar menu.")
       } footer: {
