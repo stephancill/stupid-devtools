@@ -225,6 +225,14 @@ pre {
   white-space: nowrap;
 }
 
+.menu,
+.menu button {
+  /* The press that opened the menu is still down; don't let it select menu text. */
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .menu button {
   display: block;
   width: 100%;

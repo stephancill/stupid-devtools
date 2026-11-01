@@ -13,8 +13,8 @@ Bun.serve({
     if (url.pathname === "/api/echo") {
       return Response.json({ method: request.method, body: await request.text() })
     }
-    if (url.pathname === "/demo") return new Response(Bun.file(`${import.meta.dir}/demo.html`))
-    if (url.pathname === "/demo/api/products") {
+    if (url.pathname === "/shop") return new Response(Bun.file(`${import.meta.dir}/shop.html`))
+    if (url.pathname === "/api/v1/products") {
       return Response.json({
         items: [
           { id: "ethiopia-yirgacheffe", name: "Ethiopia Yirgacheffe", price: 185, roast: "light" },
@@ -26,28 +26,28 @@ Bun.serve({
         nextCursor: null,
       })
     }
-    if (url.pathname === "/demo/api/session") {
+    if (url.pathname === "/api/v1/session") {
       return Response.json({
         user: { id: "u_8f3k2", name: "Sam", tier: "member" },
         expiresIn: 3600,
       })
     }
-    if (url.pathname === "/demo/api/cart") {
+    if (url.pathname === "/api/v1/cart") {
       return Response.json(
         { cartId: "c_19x7", items: 1, subtotal: 370, currency: "ZAR" },
         { status: 201 },
       )
     }
-    if (url.pathname === "/demo/api/recommendations") {
+    if (url.pathname === "/api/v1/recommendations") {
       return Response.json({ error: "Service Unavailable" }, { status: 503 })
     }
-    if (url.pathname === "/demo/api/stores") {
+    if (url.pathname === "/api/v1/stores") {
       return Response.json([
         { name: "Roast Bree St", open: true },
         { name: "Roast Kloof St", open: false },
       ])
     }
-    if (url.pathname === "/demo/api/analytics") return new Response(null, { status: 204 })
+    if (url.pathname === "/api/v1/analytics") return new Response(null, { status: 204 })
     if (url.pathname === "/api/xml") {
       const xml =
         '<?xml version="1.0"?><feed><item id="1"><title>One</title></item><item id="2"/></feed>'

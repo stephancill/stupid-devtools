@@ -1,0 +1,49 @@
+{
+  "logo": "../../Resources/AppIcon.png",
+  "devices": {
+    "iphone": {
+      "raw": "raw/iphone",
+      "out": "iphone"
+    },
+    "iphone65": {
+      "raw": "raw/iphone",
+      "out": "iphone65"
+    }
+  },
+  "slides": [
+    {
+      "raw": "01-console",
+      "headline": "devtools<br>for safari<br>on <span id=\"m\">iphone</span>",
+      "subtitle": "console and network. no mac, no cable",
+      "doodles": "under('m'); logo(); arrow();"
+    },
+    {
+      "raw": "02-network",
+      "headline": "every <span id=\"m\">request</span>,<br>right there",
+      "subtitle": "fetch and xhr, status at a glance",
+      "doodles": "under('m'); star(); arrow();",
+      "align": "right",
+      "position": "bottom"
+    },
+    {
+      "raw": "03-response",
+      "headline": "responses<br>you can<br><span id=\"m\">read</span>",
+      "subtitle": "json, xml, forms and images, formatted",
+      "doodles": "under('m'); star(); arrow();",
+      "align": "right"
+    },
+    {
+      "raw": "04-copy",
+      "headline": "copy as<br><span id=\"m\">curl</span>",
+      "subtitle": "or fetch. paste it straight into a terminal",
+      "doodles": "under('m'); star(); arrow();",
+      "position": "bottom"
+    },
+    {
+      "raw": "06-app-network",
+      "headline": "every tab,<br>kept for<br><span id=\"m\">later</span>",
+      "subtitle": "logs and requests stay in the app after you close safari",
+      "doodles": "under('m'); star(); arrow();"
+    }
+  ]
+}

@@ -88,3 +88,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - The response section is labelled with its type ("Response · JSON") and has a Raw/Formatted toggle for JSON, XML and form bodies, in the popup and the app.
 - The popup's small header buttons get a full-size hit area; with the minimal padding the toggle missed taps.
 - Verified on an iOS 27 simulator with new test-page routes (`/api/xml`, `/api/form`, `/api/html`, `/api/image`, `/api/untyped`): each shows the right label and formatting, and the toggle switches between formatted and raw in both the popup and the app. 17 bun tests and 15 Swift tests pass.
+
+## 2026-11-02 - App Store screenshots for 1.1.0
+
+- New screenshots in the stupid style (white canvas, lowercase headlines, hand-drawn doodles) under `screenshots/appstore-1.1.0/`: raw captures from an iPhone 17 Pro Max simulator, `spec.json`, and rendered 6.9" (`iphone/`, 1320×2868) and 6.5" (`iphone65/`, 1242×2688) sets. Captions alternate between top and bottom, left and right.
+- The captures use a realistic demo page, `web/test-page/shop.html` served at `/shop` with `/api/v1/*` routes, instead of the bare test page.
+- Fix: in the popup, holding the long press after the copy menu appeared started a text selection inside the menu. The menu is now unselectable.

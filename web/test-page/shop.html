@@ -49,7 +49,7 @@
       console.log("Roast web v2.4.1 booting", { env: "production", region: "eu-west-1" })
       const colors = ["#6f4e37", "#a0522d", "#3b2f2f", "#c19a6b"]
       const run = async () => {
-        const products = await fetch("/demo/api/products?limit=4").then((r) => r.json())
+        const products = await fetch("/api/v1/products?limit=4").then((r) => r.json())
         document.getElementById("products").innerHTML = products.items
           .map(
             (p, i) =>
@@ -57,20 +57,20 @@
           )
           .join("")
         console.info("Rendered %d products", products.items.length)
-        await fetch("/demo/api/session", {
+        await fetch("/api/v1/session", {
           headers: { authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.demo" },
         })
-        await fetch("/demo/api/cart", {
+        await fetch("/api/v1/cart", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ productId: "ethiopia-yirgacheffe", quantity: 2, grind: "filter" }),
         })
         console.warn("Image lazy-loading is disabled on this device")
-        await fetch("/demo/api/recommendations").catch(() => {})
+        await fetch("/api/v1/recommendations").catch(() => {})
         const xhr = new XMLHttpRequest()
-        xhr.open("GET", "/demo/api/stores?near=cape-town")
+        xhr.open("GET", "/api/v1/stores?near=cape-town")
         xhr.send()
-        await fetch("/demo/api/analytics", {
+        await fetch("/api/v1/analytics", {
           method: "POST",
           body: new URLSearchParams({ event: "view", page: "home" }),
         })
