@@ -59,3 +59,8 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - Removed the "excludes HttpOnly" wording from the cookie sections; the README still documents the limitation.
 - Dropped the per-tab log and request counts from `EntryStore.tabs()` since nothing shows them.
 - Verified on an iOS 27 simulator (popup console, network, detail and copy menu; app tab list, console, network and detail); `bun run check` and the 7 Swift tests pass.
+
+## 2026-11-01 - 1.1.0 (41) to internal TestFlight
+
+- Uploaded the simplified design as build 41; it reached internal TestFlight testing.
+- This repository replaced the 1.0 Xcode project on the `main` branch of the existing GitHub repository. The 1.0 history is kept on the `legacy-xcode` branch.
