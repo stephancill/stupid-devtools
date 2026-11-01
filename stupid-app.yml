@@ -1,0 +1,40 @@
+version: 1
+product: DevTools
+bundleID: co.za.stephancill.devtools
+deploymentTarget: "17.0"
+infoPath: Info.plist
+entitlementsPath: App.entitlements
+deviceFamily: iphone
+iconPath: Resources/AppIcon.png
+capabilities:
+  - entitlementKey: com.apple.security.application-groups
+    type: APP_GROUPS
+extensions:
+  - product: DevToolsSafari
+    bundleID: co.za.stephancill.devtools.Extension
+    infoPath: SafariExtension/Info.plist
+    entitlementsPath: SafariExtension/SafariExtension.entitlements
+    capabilities:
+      - entitlementKey: com.apple.security.application-groups
+        type: APP_GROUPS
+    # Built by `bun run build` in web/ (scripts and popup), except manifest.json and icons.
+    resources:
+      - SafariExtension/Resources/manifest.json
+      - SafariExtension/Resources/page.js
+      - SafariExtension/Resources/content.js
+      - SafariExtension/Resources/background.js
+      - SafariExtension/Resources/popup.html
+      - SafariExtension/Resources/popup.css
+      - SafariExtension/Resources/popup.js
+      - SafariExtension/Resources/toolbar-icon-16.png
+      - SafariExtension/Resources/toolbar-icon-19.png
+      - SafariExtension/Resources/toolbar-icon-32.png
+      - SafariExtension/Resources/toolbar-icon-38.png
+      - SafariExtension/Resources/toolbar-icon-48.png
+      - SafariExtension/Resources/toolbar-icon-72.png
+      - SafariExtension/Resources/icon-48.png
+      - SafariExtension/Resources/icon-64.png
+      - SafariExtension/Resources/icon-96.png
+      - SafariExtension/Resources/icon-128.png
+      - SafariExtension/Resources/icon-256.png
+      - SafariExtension/Resources/icon-512.png

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>devtools test page</title>
+    <script>
+      // Runs before any other script: checks page.js is installed first.
+      console.log("early inline log", { at: "head" })
+    </script>
+  </head>
+  <body style="font: 16px system-ui; padding: 16px">
+    <h1>devtools test page</h1>
+    <p>Logs and requests fire on load. Buttons repeat them.</p>
+    <button id="run">Run all</button>
+    <script>
+      document.cookie = "session=abc123"
+      const run = async () => {
+        const circular = { name: "loop", list: [1, 2, 3], nested: { undef: undefined } }
+        circular.self = circular
+        console.log("object", circular, 10n, () => {})
+        console.info("info %s has %d items", "cart", 3)
+        console.warn("a warning")
+        console.debug("debug output")
+        console.error(new Error("handled error"))
+
+        await fetch("/api/json?x=1").then((r) => r.json())
+        await fetch("/api/echo", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-test": "it's" },
+          body: JSON.stringify({ hello: "world" }),
+        })
+        const form = new FormData()
+        form.append("field", "value")
+        form.append("file", new Blob(["hi"]), "hi.txt")
+        await fetch("/api/echo", { method: "PUT", body: form })
+        await fetch(new Request("/api/echo", { method: "POST", body: "from a Request" }))
+        await fetch("/api/status/404")
+        await fetch("http://127.0.0.1:1/unreachable").catch(() => {})
+
+        const xhr = new XMLHttpRequest()
+        xhr.open("GET", "/api/json?via=xhr")
+        xhr.setRequestHeader("x-xhr", "1")
+        xhr.send()
+
+        setTimeout(() => {
+          throw new Error("uncaught error")
+        })
+        Promise.reject(new Error("rejected promise"))
+      }
+      document.getElementById("run").onclick = run
+      run()
+    </script>
+  </body>
+</html>
