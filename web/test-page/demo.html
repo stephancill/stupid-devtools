@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roast — Coffee Shop</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        font: 16px system-ui;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        margin: 8px 0 4px;
+        font-size: 28px;
+      }
+      p {
+        color: #888;
+        margin: 0 0 16px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .card {
+        border-radius: 14px;
+        padding: 12px;
+        background: rgb(127 127 127 / 0.12);
+      }
+      .card b {
+        display: block;
+        margin-top: 8px;
+      }
+      .swatch {
+        height: 70px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Roast</h1>
+    <p>Small-batch coffee, roasted weekly.</p>
+    <div class="grid" id="products"></div>
+    <script>
+      console.log("Roast web v2.4.1 booting", { env: "production", region: "eu-west-1" })
+      const colors = ["#6f4e37", "#a0522d", "#3b2f2f", "#c19a6b"]
+      const run = async () => {
+        const products = await fetch("/demo/api/products?limit=4").then((r) => r.json())
+        document.getElementById("products").innerHTML = products.items
+          .map(
+            (p, i) =>
+              `<div class="card"><div class="swatch" style="background:${colors[i]}"></div><b>${p.name}</b>R${p.price}</div>`,
+          )
+          .join("")
+        console.info("Rendered %d products", products.items.length)
+        await fetch("/demo/api/session", {
+          headers: { authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.demo" },
+        })
+        await fetch("/demo/api/cart", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ productId: "ethiopia-yirgacheffe", quantity: 2, grind: "filter" }),
+        })
+        console.warn("Image lazy-loading is disabled on this device")
+        await fetch("/demo/api/recommendations").catch(() => {})
+        const xhr = new XMLHttpRequest()
+        xhr.open("GET", "/demo/api/stores?near=cape-town")
+        xhr.send()
+        await fetch("/demo/api/analytics", {
+          method: "POST",
+          body: new URLSearchParams({ event: "view", page: "home" }),
+        })
+        console.error(new Error("Recommendations unavailable: 503 Service Unavailable"))
+      }
+      run()
+    </script>
+  </body>
+</html>
