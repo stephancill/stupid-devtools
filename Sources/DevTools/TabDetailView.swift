@@ -149,9 +149,9 @@ struct RequestCopyMenu: View {
       UIPasteboard.general.string = RequestExport.fetch(request)
     }
     Button("Copy URL", systemImage: "link") { UIPasteboard.general.string = request.url }
-    if let responseBody = request.responseBody {
+    if request.responseBody != nil {
       Button("Copy Response", systemImage: "arrow.down.doc") {
-        UIPasteboard.general.string = responseBody
+        UIPasteboard.general.string = BodyFormat.responseCopyText(request)
       }
     }
   }

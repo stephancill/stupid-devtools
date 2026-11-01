@@ -35,6 +35,7 @@
         form.append("file", new Blob(["hi"]), "hi.txt")
         await fetch("/api/echo", { method: "PUT", body: form })
         await fetch(new Request("/api/echo", { method: "POST", body: "from a Request" }))
+        for (const path of ["xml", "form", "html", "image", "untyped"]) await fetch(`/api/${path}`)
         await fetch("/api/status/404")
         await fetch("http://127.0.0.1:1/unreachable").catch(() => {})
 

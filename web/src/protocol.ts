@@ -20,3 +20,6 @@ export type EntriesResponse = { pageUrl: string; entries: Entry[] }
 
 // Response bodies are cut at this many characters before leaving the page.
 export const maxBodyLength = 100_000
+
+// Image responses up to this size are captured (as base64) so they can be previewed.
+export const maxImageBytes = 100_000

@@ -242,3 +242,26 @@ pre {
 .menu button:focus {
   outline: none;
 }
+
+.preview {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.section-head button {
+  /* Full-size hit area without growing the header. */
+  padding: 8px 10px;
+  margin: -8px -10px -8px 0;
+}

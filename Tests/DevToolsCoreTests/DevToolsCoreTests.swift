@@ -140,3 +140,75 @@ private let base = RequestEntry(
     #expect(try store.entries(tabId: 1).map(\.id) == ["new"])
   }
 }
+
+// The same cases as web/src/body.test.ts.
+@Suite struct BodyFormatTests {
+  @Test func jsonKeepsKeyOrderAndStringContents() {
+    #expect(
+      BodyFormat.view(
+        body: #"{"b":1,"a":[1,{"c":"x,y"}],"e":{},"s":"q\"}"}"#,
+        contentType: "application/json; charset=utf-8")
+        == .json(
+          [
+            "{",
+            #"  "b": 1,"#,
+            #"  "a": ["#,
+            "    1,",
+            "    {",
+            #"      "c": "x,y""#,
+            "    }",
+            "  ],",
+            #"  "e": {},"#,
+            #"  "s": "q\"}""#,
+            "}",
+          ].joined(separator: "\n")))
+  }
+
+  @Test func jsonIsSniffedWithoutContentType() {
+    #expect(BodyFormat.view(body: " [1, 2]", contentType: nil) == .json("[\n  1,\n  2\n]"))
+  }
+
+  @Test func jsonIsSniffedInTextPlain() {
+    #expect(
+      BodyFormat.view(body: #"{"a":1}"#, contentType: "text/plain;charset=utf-8")
+        == .json("{\n  \"a\": 1\n}"))
+  }
+
+  @Test func invalidJSONFallsBackToText() {
+    #expect(BodyFormat.view(body: "{nope", contentType: "application/json") == .text("{nope"))
+  }
+
+  @Test func formBodiesBecomeFields() {
+    #expect(
+      BodyFormat.view(
+        body: "a=1&b=two%20words&a=3", contentType: "application/x-www-form-urlencoded")
+        == .form([.init("a", "1"), .init("b", "two words"), .init("a", "3")]))
+  }
+
+  @Test func xmlIsIndented() {
+    #expect(
+      BodyFormat.view(body: #"<?xml version="1.0"?><a><b>t</b><c/></a>"#, contentType: nil)
+        == .xml(
+          [#"<?xml version="1.0"?>"#, "<a>", "  <b>", "    t", "  </b>", "  <c/>", "</a>"]
+            .joined(separator: "\n")))
+  }
+
+  @Test func htmlAndTextAreShownAsSent() {
+    #expect(
+      BodyFormat.view(body: "<!doctype html><p>hi</p>", contentType: nil)
+        == .html("<!doctype html><p>hi</p>"))
+    #expect(BodyFormat.view(body: "hello", contentType: "text/plain") == .text("hello"))
+  }
+
+  @Test func base64BodiesAreImages() {
+    guard
+      case .image(let dataURL, let data) = BodyFormat.view(
+        body: "AAAA", contentType: "image/png", encoding: "base64")
+    else {
+      Issue.record("not an image")
+      return
+    }
+    #expect(dataURL == "data:image/png;base64,AAAA")
+    #expect(data == Data([0, 0, 0]))
+  }
+}

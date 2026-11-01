@@ -7,6 +7,14 @@ import {
 } from "@tanstack/react-query"
 import { useEffect, useRef, useState } from "react"
 import { createRoot } from "react-dom/client"
+import {
+  type BodyView,
+  bodyLabels,
+  bodyView,
+  headerValue,
+  responseCopyText,
+  responseView,
+} from "../body"
 import { toCurl, toFetch } from "../export"
 import type { EntriesResponse, Entry, LogEntry, RequestEntry, RuntimeMessage } from "../protocol"
 
@@ -87,14 +95,6 @@ const pathOf = (url: string) => {
     return parsed.pathname + parsed.search
   } catch {
     return url
-  }
-}
-
-const prettyBody = (body: string) => {
-  try {
-    return JSON.stringify(JSON.parse(body), null, 2)
-  } catch {
-    return body
   }
 }
 
@@ -236,7 +236,7 @@ function CopyMenu({
         Copy URL
       </button>
       {request.responseBody !== undefined && (
-        <button type="button" onClick={() => choose(request.responseBody ?? "")}>
+        <button type="button" onClick={() => choose(responseCopyText(request))}>
           Copy response
         </button>
       )}
@@ -256,13 +256,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function Fields({ fields }: { fields: Record<string, string> }) {
-  const entries = Object.entries(fields)
+function Fields({ fields }: { fields: Record<string, string> | [string, string][] }) {
+  const entries = Array.isArray(fields) ? fields : Object.entries(fields)
   if (entries.length === 0) return <p className="empty">None</p>
   return (
     <dl>
-      {entries.map(([name, value]) => (
-        <div key={name}>
+      {entries.map(([name, value], index) => (
+        <div key={`${index}-${name}`}>
           <dt>{name}</dt>
           <dd>{value}</dd>
         </div>
@@ -271,10 +271,42 @@ function Fields({ fields }: { fields: Record<string, string> }) {
   )
 }
 
+function BodyContent({ view }: { view: BodyView }) {
+  if (view.kind === "image") return <img className="preview" src={view.dataUrl} alt="" />
+  if (view.kind === "form") return <Fields fields={view.fields} />
+  return <pre>{view.text}</pre>
+}
+
+// Formatted views that differ from the raw text get a Raw/Formatted switch.
+const hasRawView = (view: BodyView) =>
+  view.kind === "json" || view.kind === "xml" || view.kind === "form"
+
+function ResponseSection({ request, view }: { request: RequestEntry; view: BodyView }) {
+  const [raw, setRaw] = useState(false)
+  return (
+    <section>
+      <div className="section-head">
+        <h2>
+          Response · {raw ? "Raw" : bodyLabels[view.kind]}
+          {request.responseBodyTruncated ? " (truncated)" : ""}
+        </h2>
+        <span className="spacer" />
+        {hasRawView(view) && (
+          <button type="button" onClick={() => setRaw(!raw)}>
+            {raw ? "Formatted" : "Raw"}
+          </button>
+        )}
+      </div>
+      {raw ? <pre>{request.responseBody}</pre> : <BodyContent view={view} />}
+    </section>
+  )
+}
+
 function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [status, setStatus] = useState<string>()
   const body = request.requestBody
+  const response = responseView(request)
   return (
     <div className="panel scroll detail">
       <div className="bar">
@@ -306,12 +338,8 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
           }}
         />
       </Section>
-      {request.responseBody !== undefined ? (
-        <Section
-          title={request.responseBodyTruncated ? "Response body (truncated)" : "Response body"}
-        >
-          <pre>{prettyBody(request.responseBody)}</pre>
-        </Section>
+      {response ? (
+        <ResponseSection request={request} view={response} />
       ) : (
         <Section title="Response body">
           <pre className="muted">
@@ -329,7 +357,14 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
       )}
       {body && (
         <Section title="Request body">
-          {body.kind === "text" && <pre>{prettyBody(body.text)}</pre>}
+          {body.kind === "text" && (
+            <BodyContent
+              view={bodyView({
+                body: body.text,
+                contentType: headerValue(request.requestHeaders, "content-type"),
+              })}
+            />
+          )}
           {body.kind === "form" && (
             <Fields
               fields={Object.fromEntries(

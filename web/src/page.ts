@@ -10,6 +10,7 @@ import {
   entryEvent,
   evalEvent,
   maxBodyLength,
+  maxImageBytes,
 } from "./protocol"
 
 const installed = "__stupidDevtoolsInstalled"
@@ -128,6 +129,26 @@ function install() {
   const isTextual = (contentType: string | null) =>
     !contentType || /json|text\/|javascript|xml|x-www-form-urlencoded|graphql/i.test(contentType)
 
+  const isImage = (contentType: string | null) =>
+    !!contentType && /^image\//i.test(contentType) && !/svg/i.test(contentType)
+
+  const base64 = (bytes: Uint8Array) => {
+    let binary = ""
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+    }
+    return btoa(binary)
+  }
+
+  // Captures small images for previewing; larger ones only report their size.
+  const imageBody = async (blob: Blob): Promise<Partial<RequestEntry>> =>
+    blob.size > maxImageBytes
+      ? { responseBody: `[image, ${blob.size} bytes, too large to preview]` }
+      : {
+          responseBody: base64(new Uint8Array(await blob.arrayBuffer())),
+          responseBodyEncoding: "base64",
+        }
+
   const truncate = (text: string) =>
     text.length > maxBodyLength
       ? { body: text.slice(0, maxBodyLength), truncated: true }
@@ -202,6 +223,19 @@ function install() {
         })
         if (response.type === "opaque" || response.type === "opaqueredirect") {
           finish({ responseBody: "[opaque response, body unavailable]" })
+        } else if (isImage(response.headers.get("content-type"))) {
+          const length = Number(response.headers.get("content-length") ?? 0)
+          if (length > maxImageBytes) {
+            finish({ responseBody: `[image, ${length} bytes, too large to preview]` })
+          } else {
+            response
+              .clone()
+              .blob()
+              .then(imageBody)
+              .then(finish, (error) =>
+                finish({ error: `Failed to read body: ${errorMessage(error)}` }),
+              )
+          }
         } else if (!isTextual(response.headers.get("content-type"))) {
           finish({ responseBody: `[binary: ${response.headers.get("content-type")}]` })
         } else {
@@ -269,25 +303,30 @@ function install() {
               .trim()
           }
         }
-        let responseBody: string
-        let truncated = false
-        if (this.responseType === "" || this.responseType === "text") {
-          ;({ body: responseBody, truncated } = truncate(this.responseText))
-        } else if (this.responseType === "json") {
-          ;({ body: responseBody, truncated } = truncate(JSON.stringify(this.response)))
-        } else {
-          responseBody = `[${this.responseType} response]`
+        const done = (body: Partial<RequestEntry>) =>
+          emit(
+            Object.assign(entry, {
+              status: this.status,
+              statusText: this.statusText,
+              responseHeaders,
+              ...body,
+              endTime: Date.now(),
+            }),
+          )
+        const text = (value: string) => {
+          const { body, truncated } = truncate(value)
+          return { responseBody: body, responseBodyTruncated: truncated }
         }
-        emit(
-          Object.assign(entry, {
-            status: this.status,
-            statusText: this.statusText,
-            responseHeaders,
-            responseBody,
-            responseBodyTruncated: truncated,
-            endTime: Date.now(),
-          }),
-        )
+        if (this.responseType === "" || this.responseType === "text") {
+          done(text(this.responseText))
+        } else if (this.responseType === "json") {
+          done(text(JSON.stringify(this.response)))
+        } else if (isImage(responseHeaders["content-type"] ?? null) && this.response) {
+          const blob = this.response instanceof Blob ? this.response : new Blob([this.response])
+          imageBody(blob).then(done, () => done({ responseBody: "[image, unreadable]" }))
+        } else {
+          done({ responseBody: `[${this.responseType} response]` })
+        }
       })
     }
     return send.call(this, body)

@@ -21,6 +21,7 @@
 
 - `web/src/entries.ts` and `Sources/DevToolsCore/Entry.swift` describe the same JSON; change both together.
 - `web/src/export.ts` and `Sources/DevToolsCore/RequestExport.swift` must produce identical text; the tests in `web/src/export.test.ts` and `Tests/DevToolsCoreTests` cover the same cases. Change both together.
+- `web/src/body.ts` and `Sources/DevToolsCore/BodyFormat.swift` must format bodies identically; `web/src/body.test.ts` and `BodyFormatTests` share cases. Change both together.
 - Keep `page.js` free of runtime dependencies (it runs in every page's MAIN world) and `content.js` small.
 - `background.js` must stay stateless: Safari suspends it at any time.
 - Fail loudly: surface errors in the popup or app rather than silently falling back.

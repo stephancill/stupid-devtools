@@ -82,6 +82,8 @@ public struct RequestEntry: Codable, Sendable, Identifiable, Hashable {
   public var responseHeaders: [String: String]?
   public var responseBody: String?
   public var responseBodyTruncated: Bool?
+  /// "base64" when `responseBody` holds image bytes rather than text.
+  public var responseBodyEncoding: String?
   public var error: String?
   public var startTime: Double
   public var endTime: Double?
@@ -90,7 +92,8 @@ public struct RequestEntry: Codable, Sendable, Identifiable, Hashable {
     id: String, initiator: String = "fetch", method: String, url: String,
     requestHeaders: [String: String] = [:], requestBody: RequestBody? = nil, cookies: String? = nil,
     status: Int? = nil, statusText: String? = nil, responseHeaders: [String: String]? = nil,
-    responseBody: String? = nil, responseBodyTruncated: Bool? = nil, error: String? = nil,
+    responseBody: String? = nil, responseBodyTruncated: Bool? = nil,
+    responseBodyEncoding: String? = nil, error: String? = nil,
     startTime: Double, endTime: Double? = nil
   ) {
     self.id = id
@@ -105,6 +108,7 @@ public struct RequestEntry: Codable, Sendable, Identifiable, Hashable {
     self.responseHeaders = responseHeaders
     self.responseBody = responseBody
     self.responseBodyTruncated = responseBodyTruncated
+    self.responseBodyEncoding = responseBodyEncoding
     self.error = error
     self.startTime = startTime
     self.endTime = endTime

@@ -80,3 +80,11 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - The request detail (popup and app) now shows the response body directly under the URL, status and duration, before the request headers, cookies, request body and response headers. It was previously last, below every header, and easy to miss.
 - When there is no body yet the section says "Waiting for response" (still in flight) or "None".
 - Verified on an iOS 27 simulator in the popup and the app.
+
+## 2026-11-01 - Bodies formatted by type, raw toggle
+
+- New `web/src/body.ts` and `Sources/DevToolsCore/BodyFormat.swift` (same rules, shared test cases) pick a view from the body's `Content-Type`: JSON is re-indented by walking the text (not parse and re-serialize, so key order and number formatting are kept; the app previously used `JSONSerialization`, which reordered keys), form-encoded bodies become name/value rows (duplicates kept), XML/SVG text is indented tag by tag, HTML and other text are shown as sent. Without a content type, or with `text/plain`, JSON, `<?xml` and HTML documents are sniffed. Request bodies use the same rules with the request's content type.
+- Image responses (except SVG, which is XML) up to 100 KB are captured in `page.js` as base64 (`responseBodyEncoding: "base64"`) and previewed; larger ones record their size. "Copy response" copies a data URL for images.
+- The response section is labelled with its type ("Response · JSON") and has a Raw/Formatted toggle for JSON, XML and form bodies, in the popup and the app.
+- The popup's small header buttons get a full-size hit area; with the minimal padding the toggle missed taps.
+- Verified on an iOS 27 simulator with new test-page routes (`/api/xml`, `/api/form`, `/api/html`, `/api/image`, `/api/untyped`): each shows the right label and formatting, and the toggle switches between formatted and raw in both the popup and the app. 17 bun tests and 15 Swift tests pass.

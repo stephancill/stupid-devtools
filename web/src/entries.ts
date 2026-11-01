@@ -45,6 +45,8 @@ export const requestEntrySchema = z.object({
   responseHeaders: z.optional(headers),
   responseBody: z.optional(z.string()),
   responseBodyTruncated: z.optional(z.boolean()),
+  // Set when responseBody holds base64 bytes (captured images) rather than text.
+  responseBodyEncoding: z.optional(z.literal("base64")),
   error: z.optional(z.string()),
   startTime: z.number(),
   endTime: z.optional(z.number()),

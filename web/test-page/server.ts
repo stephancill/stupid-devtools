@@ -13,6 +13,27 @@ Bun.serve({
     if (url.pathname === "/api/echo") {
       return Response.json({ method: request.method, body: await request.text() })
     }
+    if (url.pathname === "/api/xml") {
+      const xml =
+        '<?xml version="1.0"?><feed><item id="1"><title>One</title></item><item id="2"/></feed>'
+      return new Response(xml, { headers: { "content-type": "application/xml" } })
+    }
+    if (url.pathname === "/api/form") {
+      return new Response("name=stupid+devtools&tags=a&tags=b%26c", {
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+      })
+    }
+    if (url.pathname === "/api/html") {
+      return new Response("<!doctype html><h1>Hello</h1>", {
+        headers: { "content-type": "text/html" },
+      })
+    }
+    if (url.pathname === "/api/image") {
+      return new Response(
+        Bun.file(`${import.meta.dir}/../../SafariExtension/Resources/icon-96.png`),
+      )
+    }
+    if (url.pathname === "/api/untyped") return new Response('{"sniffed":true}')
     const status = url.pathname.match(/^\/api\/status\/(\d+)$/)
     if (status) return new Response("status page", { status: Number(status[1]) })
     return new Response("not found", { status: 404 })

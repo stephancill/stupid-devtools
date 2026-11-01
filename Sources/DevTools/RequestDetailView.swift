@@ -3,6 +3,7 @@ import SwiftUI
 
 struct RequestDetailView: View {
   let request: RequestEntry
+  @State private var showRaw = false
 
   /// Long bodies render slowly in a list row; the full body is still copied.
   private static let displayLimit = 5_000
@@ -15,14 +16,25 @@ struct RequestDetailView: View {
         ValueRow(label: "Duration", value: formatDuration(request))
       }
       Section {
-        if let responseBody = request.responseBody {
-          bodyText(responseBody)
+        if let response {
+          if showRaw, let raw = request.responseBody {
+            bodyText(raw)
+          } else {
+            bodyContent(response)
+          }
         } else {
           Text(request.endTime == nil ? "Waiting for response" : "None")
             .foregroundStyle(.secondary)
         }
       } header: {
-        Text("Response Body")
+        HStack {
+          Text(response.map { "Response · \(showRaw ? "Raw" : $0.label)" } ?? "Response")
+          Spacer()
+          if response?.hasRawView == true {
+            Button(showRaw ? "Formatted" : "Raw") { showRaw.toggle() }
+              .font(.footnote)
+          }
+        }
       } footer: {
         if request.responseBodyTruncated == true {
           Text("Truncated to the first 100,000 characters.")
@@ -35,7 +47,11 @@ struct RequestDetailView: View {
       if let body = request.requestBody {
         Section("Request Body") {
           switch body {
-          case .text(let text): bodyText(text)
+          case .text(let text):
+            bodyContent(
+              BodyFormat.view(
+                body: text,
+                contentType: BodyFormat.headerValue(request.requestHeaders, "content-type")))
           case .form(let fields):
             ForEach(fields, id: \.self) { field in
               ValueRow(
@@ -60,6 +76,8 @@ struct RequestDetailView: View {
     }
   }
 
+  private var response: BodyView? { BodyFormat.responseView(request) }
+
   private var statusText: String {
     if let error = request.error { return error }
     guard let status = request.status else { return "Pending" }
@@ -79,25 +97,37 @@ struct RequestDetailView: View {
     }
   }
 
+  @ViewBuilder
+  private func bodyContent(_ view: BodyView) -> some View {
+    switch view {
+    case .image(_, let data):
+      if let image = UIImage(data: data) {
+        Image(uiImage: image)
+          .resizable()
+          .scaledToFit()
+          .frame(maxHeight: 300)
+          .contextMenu {
+            Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.image = image }
+          }
+      } else {
+        Text("Image could not be decoded").foregroundStyle(.secondary)
+      }
+    case .form(let pairs):
+      ForEach(Array(pairs.enumerated()), id: \.offset) { _, pair in
+        ValueRow(label: pair.name, value: pair.value)
+      }
+    case .json(let text), .xml(let text), .html(let text), .text(let text):
+      bodyText(text)
+    }
+  }
+
   private func bodyText(_ text: String) -> some View {
-    let pretty = prettyJSON(text) ?? text
     let shown =
-      pretty.count > Self.displayLimit ? String(pretty.prefix(Self.displayLimit)) + "…" : pretty
+      text.count > Self.displayLimit ? String(text.prefix(Self.displayLimit)) + "…" : text
     return Text(shown)
       .font(.footnote)
       .contextMenu {
-        Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = pretty }
+        Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = text }
       }
-  }
-
-  private func prettyJSON(_ text: String) -> String? {
-    guard
-      let object = try? JSONSerialization.jsonObject(
-        with: Data(text.utf8), options: .fragmentsAllowed),
-      object is [Any] || object is [String: Any],
-      let data = try? JSONSerialization.data(
-        withJSONObject: object, options: [.prettyPrinted, .withoutEscapingSlashes])
-    else { return nil }
-    return String(decoding: data, as: UTF8.self)
   }
 }
