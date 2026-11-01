@@ -15,12 +15,7 @@ struct TabsView: View {
         }
         ForEach(tabs) { tab in
           NavigationLink(value: tab) {
-            VStack(alignment: .leading) {
-              Text(host(of: tab.pageURL))
-              Text("\(tab.logCount) logs · \(tab.requestCount) requests")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            }
+            Text(host(of: tab.pageURL))
           }
         }
       }

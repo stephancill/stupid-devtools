@@ -29,7 +29,3 @@ func formatDuration(_ request: RequestEntry) -> String {
   guard let ms = request.durationMilliseconds else { return "pending" }
   return ms < 1000 ? "\(Int(ms)) ms" : String(format: "%.2f s", ms / 1000)
 }
-
-func formatTime(_ ms: Double) -> String {
-  Date(timeIntervalSince1970: ms / 1000).formatted(date: .omitted, time: .standard)
-}

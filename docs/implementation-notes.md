@@ -51,3 +51,11 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - Provisioned App Store profiles for the app and extension with `stupid-app signing setup --kind distribution` (enables App Groups on both bundle IDs).
 - Build number set to 40, following the builds uploaded by the 1.0 Xcode Cloud pipeline.
 - Archived and uploaded with `stupid-app release archive` and `release upload --wait`; the build reached internal TestFlight testing.
+
+## 2026-11-01 - Simpler design
+
+- Popup: plain text tabs and buttons (no borders), log levels shown by text colour only (no row tints), no timestamps in the console, request rows show method, path and status only. The request detail has Back and one Copy button that opens the same menu as a long press. The menu drops the focus ring `showModal()` puts on its first item.
+- App: tab rows show the host only, log rows show the message only, request rows are one line (method and path, status on the right). The request detail drops the Method row (it is the title) and Initiator, and the General header.
+- Removed the "excludes HttpOnly" wording from the cookie sections; the README still documents the limitation.
+- Dropped the per-tab log and request counts from `EntryStore.tabs()` since nothing shows them.
+- Verified on an iOS 27 simulator (popup console, network, detail and copy menu; app tab list, console, network and detail); `bun run check` and the 7 Swift tests pass.

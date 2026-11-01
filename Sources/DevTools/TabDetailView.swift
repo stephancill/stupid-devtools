@@ -102,17 +102,12 @@ struct LogRow: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(prefix + log.message)
-        .foregroundStyle(color)
-        .lineLimit(20)
-      Text("\(log.level.rawValue) · \(formatTime(log.time))")
-        .font(.footnote)
-        .foregroundStyle(.secondary)
-    }
-    .contextMenu {
-      Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = log.message }
-    }
+    Text(prefix + log.message)
+      .foregroundStyle(color)
+      .lineLimit(20)
+      .contextMenu {
+        Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = log.message }
+      }
   }
 }
 
@@ -130,15 +125,15 @@ struct RequestRow: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
+    HStack {
       Text("\(request.method) \(path)")
         .lineLimit(1)
         .truncationMode(.middle)
-        .foregroundStyle(request.failed ? .red : .primary)
-      Text("\(status) · \(formatDuration(request)) · \(host(of: request.url))")
-        .font(.footnote)
+      Spacer()
+      Text(status)
         .foregroundStyle(.secondary)
     }
+    .foregroundStyle(request.failed ? .red : .primary)
   }
 }
 

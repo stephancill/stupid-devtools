@@ -75,8 +75,6 @@ const unsmarten = (code: string) =>
     .replace(/…/g, "...")
     .replace(/[–—]/g, "-")
 
-const time = (ms: number) => new Date(ms).toLocaleTimeString([], { hour12: false })
-
 const duration = (request: RequestEntry) => {
   if (request.endTime === undefined) return "pending"
   const ms = request.endTime - request.startTime
@@ -115,7 +113,6 @@ function Console({ logs }: { logs: LogEntry[] }) {
         {logs.length === 0 && <p className="empty">No console output yet.</p>}
         {logs.map((log) => (
           <div key={log.id} className={`row log ${log.level}`}>
-            <span className="time">{time(log.time)}</span>
             <span className="message">
               {levelPrefix[log.level]}
               {log.message}
@@ -211,9 +208,7 @@ function RequestRow({
     >
       <span className="method">{request.method}</span>
       <span className="message">{pathOf(request.url)}</span>
-      <span className="time">
-        {request.error ? "failed" : (request.status ?? "…")} · {duration(request)}
-      </span>
+      <span className="muted">{request.error ? "failed" : (request.status ?? "…")}</span>
     </button>
   )
 }
@@ -277,36 +272,37 @@ function Fields({ fields }: { fields: Record<string, string> }) {
 }
 
 function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const [status, setStatus] = useState<string>()
   const body = request.requestBody
   return (
     <div className="panel scroll detail">
       <div className="bar">
         <button type="button" onClick={onBack}>
-          Back
+          ‹ Back
         </button>
-        <button type="button" onClick={() => copy(toCurl(request), setStatus)}>
-          Copy as cURL
+        <span className="spacer" />
+        <button type="button" onClick={() => setMenuOpen(true)}>
+          Copy
         </button>
-        <button type="button" onClick={() => copy(toFetch(request), setStatus)}>
-          Copy as fetch
-        </button>
-        {request.responseBody !== undefined && (
-          <button type="button" onClick={() => copy(request.responseBody ?? "", setStatus)}>
-            Copy response
-          </button>
-        )}
       </div>
       {status && <p className="status">{status}</p>}
-      <Section title="General">
+      {menuOpen && (
+        <CopyMenu
+          request={request}
+          onClose={(result) => {
+            setMenuOpen(false)
+            setStatus(result)
+          }}
+        />
+      )}
+      <Section title={request.method}>
         <Fields
           fields={{
             URL: request.url,
-            Method: request.method,
             Status:
               request.error ?? `${request.status ?? "pending"} ${request.statusText ?? ""}`.trim(),
             Duration: duration(request),
-            Initiator: request.initiator,
           }}
         />
       </Section>
@@ -314,7 +310,7 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
         <Fields fields={request.requestHeaders} />
       </Section>
       {request.cookies && (
-        <Section title="Cookies (document.cookie, excludes HttpOnly)">
+        <Section title="Cookies">
           <pre>{request.cookies}</pre>
         </Section>
       )}

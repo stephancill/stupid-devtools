@@ -21,8 +21,6 @@ public final class EntryStore {
     public var id: Int { tabId }
     public var tabId: Int
     public var pageURL: String
-    public var logCount: Int
-    public var requestCount: Int
     public var lastActivity: Double
   }
 
@@ -127,16 +125,14 @@ public final class EntryStore {
     // SQLite returns page_url from the row holding MAX(time).
     let query = try prepare(
       """
-      SELECT tab_id, page_url, MAX(time),
-        SUM(kind = 'log'), SUM(kind = 'request')
+      SELECT tab_id, page_url, MAX(time)
       FROM entries GROUP BY tab_id ORDER BY MAX(time) DESC
       """)
     var tabs: [TabSummary] = []
     while try query.step() {
       tabs.append(
         TabSummary(
-          tabId: query.int(0), pageURL: query.text(1), logCount: query.int(3),
-          requestCount: query.int(4), lastActivity: query.double(2)))
+          tabId: query.int(0), pageURL: query.text(1), lastActivity: query.double(2)))
     }
     return tabs
   }

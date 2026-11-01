@@ -9,22 +9,14 @@ struct RequestDetailView: View {
 
   var body: some View {
     List {
-      Section("General") {
+      Section {
         ValueRow(label: "URL", value: request.url)
-        ValueRow(label: "Method", value: request.method)
         ValueRow(label: "Status", value: statusText)
         ValueRow(label: "Duration", value: formatDuration(request))
-        ValueRow(label: "Initiator", value: request.initiator)
       }
       headerSection("Request Headers", request.requestHeaders)
       if let cookies = request.cookies {
-        Section {
-          bodyText(cookies)
-        } header: {
-          Text("Cookies")
-        } footer: {
-          Text("From document.cookie, so HttpOnly cookies are not included.")
-        }
+        Section("Cookies") { bodyText(cookies) }
       }
       if let body = request.requestBody {
         Section("Request Body") {
