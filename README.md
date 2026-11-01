@@ -7,7 +7,7 @@ A Safari Web Extension for iOS that adds a console and network inspector to mobi
 - **Console:** `console.log/info/warn/error/debug` (with `%s %d %o %c` substitutions), uncaught errors and unhandled rejections. Values are formatted safely: circular references, `undefined`, bigint, functions, DOM nodes, Maps and Sets.
 - **Run JavaScript** on the current page from the popup. Pages whose CSP forbids `unsafe-eval` show the error instead.
 - **Network:** `fetch` and `XMLHttpRequest`, with headers, request bodies (text, form data, binary size), response bodies (text-like, first 100,000 characters) and same-origin `document.cookie`.
-- **Copy as cURL / fetch:** long-press a request in the popup or the app.
+- **Copy as cURL / fetch / response:** long-press a request in the popup or the app.
 - **History in the app:** entries are stored per Safari tab and removed when the tab closes, after the retention period, or past the per-tab limits in Settings.
 
 ## How it works

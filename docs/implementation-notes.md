@@ -39,3 +39,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 
 - `bun run check` (typecheck, oxlint, oxfmt, 9 bun tests) and 7 Swift tests via `xcodebuild test` on an iOS 27 simulator.
 - On an iOS 27 simulator with the test page: console levels, substitutions, circular values, uncaught errors and rejections, popup eval, fetch (JSON, FormData, `Request` object, 404, unreachable host), XHR; entries persisted to the App Group store and shown in the app; long-press Copy as cURL / fetch in the popup and app, and the copied cURL replayed successfully against the test server.
+
+## 2026-11-01 - Copy response
+
+- Added "Copy response" to the request long-press menus (popup and app) and the popup request detail bar. It copies the captured response body as stored, so a truncated body is copied truncated and binary or opaque responses copy their placeholder text.
+- The popup toolbar wraps so the extra button fits.
+- Verified on an iOS 27 simulator: both menus put the exact JSON response body on the pasteboard.

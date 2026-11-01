@@ -240,6 +240,11 @@ function CopyMenu({
       <button type="button" onClick={() => choose(request.url)}>
         Copy URL
       </button>
+      {request.responseBody !== undefined && (
+        <button type="button" onClick={() => choose(request.responseBody ?? "")}>
+          Copy response
+        </button>
+      )}
       <button type="button" onClick={() => onClose()}>
         Cancel
       </button>
@@ -286,6 +291,11 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
         <button type="button" onClick={() => copy(toFetch(request), setStatus)}>
           Copy as fetch
         </button>
+        {request.responseBody !== undefined && (
+          <button type="button" onClick={() => copy(request.responseBody ?? "", setStatus)}>
+            Copy response
+          </button>
+        )}
       </div>
       {status && <p className="status">{status}</p>}
       <Section title="General">
