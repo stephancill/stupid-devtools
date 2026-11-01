@@ -306,6 +306,19 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
           }}
         />
       </Section>
+      {request.responseBody !== undefined ? (
+        <Section
+          title={request.responseBodyTruncated ? "Response body (truncated)" : "Response body"}
+        >
+          <pre>{prettyBody(request.responseBody)}</pre>
+        </Section>
+      ) : (
+        <Section title="Response body">
+          <pre className="muted">
+            {request.endTime === undefined ? "Waiting for response…" : "None"}
+          </pre>
+        </Section>
+      )}
       <Section title="Request headers">
         <Fields fields={request.requestHeaders} />
       </Section>
@@ -330,13 +343,6 @@ function RequestDetail({ request, onBack }: { request: RequestEntry; onBack: () 
       {request.responseHeaders && (
         <Section title="Response headers">
           <Fields fields={request.responseHeaders} />
-        </Section>
-      )}
-      {request.responseBody !== undefined && (
-        <Section
-          title={request.responseBodyTruncated ? "Response body (truncated)" : "Response body"}
-        >
-          <pre>{prettyBody(request.responseBody)}</pre>
         </Section>
       )}
     </div>

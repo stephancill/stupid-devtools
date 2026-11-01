@@ -74,3 +74,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 ## 2026-11-01 - 1.1.0 (42) to internal TestFlight
 
 - Uploaded the rename and new icon as build 42; it reached internal TestFlight testing.
+
+## 2026-11-01 - Response body first
+
+- The request detail (popup and app) now shows the response body directly under the URL, status and duration, before the request headers, cookies, request body and response headers. It was previously last, below every header, and easy to miss.
+- When there is no body yet the section says "Waiting for response" (still in flight) or "None".
+- Verified on an iOS 27 simulator in the popup and the app.

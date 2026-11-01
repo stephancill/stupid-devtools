@@ -14,6 +14,20 @@ struct RequestDetailView: View {
         ValueRow(label: "Status", value: statusText)
         ValueRow(label: "Duration", value: formatDuration(request))
       }
+      Section {
+        if let responseBody = request.responseBody {
+          bodyText(responseBody)
+        } else {
+          Text(request.endTime == nil ? "Waiting for response" : "None")
+            .foregroundStyle(.secondary)
+        }
+      } header: {
+        Text("Response Body")
+      } footer: {
+        if request.responseBodyTruncated == true {
+          Text("Truncated to the first 100,000 characters.")
+        }
+      }
       headerSection("Request Headers", request.requestHeaders)
       if let cookies = request.cookies {
         Section("Cookies") { bodyText(cookies) }
@@ -37,17 +51,6 @@ struct RequestDetailView: View {
       }
       if let headers = request.responseHeaders {
         headerSection("Response Headers", headers)
-      }
-      if let responseBody = request.responseBody {
-        Section {
-          bodyText(responseBody)
-        } header: {
-          Text("Response Body")
-        } footer: {
-          if request.responseBodyTruncated == true {
-            Text("Truncated to the first 100,000 characters.")
-          }
-        }
       }
     }
     .navigationTitle(request.method)
