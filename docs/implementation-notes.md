@@ -45,3 +45,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - Added "Copy response" to the request long-press menus (popup and app) and the popup request detail bar. It copies the captured response body as stored, so a truncated body is copied truncated and binary or opaque responses copy their placeholder text.
 - The popup toolbar wraps so the extra button fits.
 - Verified on an iOS 27 simulator: both menus put the exact JSON response body on the pasteboard.
+
+## 2026-11-01 - 1.1.0 (40) to internal TestFlight
+
+- Provisioned App Store profiles for the app and extension with `stupid-app signing setup --kind distribution` (enables App Groups on both bundle IDs).
+- Build number set to 40, following the builds uploaded by the 1.0 Xcode Cloud pipeline.
+- Archived and uploaded with `stupid-app release archive` and `release upload --wait`; the build reached internal TestFlight testing.
