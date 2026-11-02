@@ -94,3 +94,9 @@ Rewrote the 1.0 Xcode project as a stupid-app SwiftPM project, keeping the bundl
 - New screenshots in the stupid style (white canvas, lowercase headlines, hand-drawn doodles) under `screenshots/appstore-1.1.0/`: raw captures from an iPhone 17 Pro Max simulator, `spec.json`, and rendered 6.9" (`iphone/`, 1320×2868) and 6.5" (`iphone65/`, 1242×2688) sets. Captions alternate between top and bottom, left and right.
 - The captures use a realistic demo page, `web/test-page/shop.html` served at `/shop` with `/api/v1/*` routes, instead of the bare test page.
 - Fix: in the popup, holding the long press after the copy menu appeared started a text selection inside the menu. The menu is now unselectable.
+
+## 2026-11-02 - App Store 1.1.0 listing
+
+- Created App Store version 1.1.0 in App Store Connect (state: Prepare for Submission) and replaced its screenshots with the stupid-style sets: 6.9" (`APP_IPHONE_67`, new) and 6.5" (`APP_IPHONE_65`, replacing the 1.0 frames).
+- Listing name changed from "devtools" to "stupid devtools" (subtitle unchanged), the description now opens with "stupid devtools", and the "browser devtools" keyword became "safari devtools".
+- Not done yet: attaching a build, What's New, and Add for Review.
