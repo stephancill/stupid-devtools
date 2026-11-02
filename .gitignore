@@ -12,3 +12,5 @@ SafariExtension/Resources/popup.html
 SafariExtension/Resources/popup.css
 SafariExtension/Resources/popup.js
 .env.local
+# App Store screenshot images are generated from spec.json and kept out of git
+screenshots/**/*.png
